@@ -13,11 +13,11 @@ const SearchBar = ({ onSearch }) => {
     <div className="search-bar">
       <input 
         type="text" 
-        placeholder="Enter city name..." 
+        placeholder="Ingrese el nombre de la ciudad..." 
         value={city} 
         onChange={(e) => setCity(e.target.value)} 
       />
-      <button onClick={handleSearch}>Search</button>
+      <button onClick={handleSearch}>Buscar</button>
     </div>
   );
 };
