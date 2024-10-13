@@ -36,3 +36,18 @@ export const getForecastByCity = async (city) => {
       throw error;
     }
   };
+  export const getAirQualityByCity = async (lat, lon) => {
+    try {
+      const response = await axios.get(`${BASE_URL}air_pollution`, {
+        params: {
+          lat,
+          lon,
+          appid: API_KEY,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching air quality data:', error);
+      throw error;
+    }
+  };
