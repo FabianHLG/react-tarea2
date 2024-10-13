@@ -82,7 +82,7 @@ const App = () => {
 
   return (
     <div className="app">
-      <h1>Aplicación del Clima</h1>
+      <h1>Mundo Meteorológico</h1>
       <SearchBar onSearch={handleSearch} countries={countries} />
       {error && <p>{error}</p>}
       <WeatherCard weatherData={weatherData} />
