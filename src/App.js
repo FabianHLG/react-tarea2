@@ -8,7 +8,7 @@ import './App.css';
 import './SearchBar.css';
 import './WeatherCard.css';
 import './ForecastCard.css';
-import './AirQualityCard.css'; // Importamos los estilos de AirQualityCard
+import './AirQualityCard.css';
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
 
@@ -17,10 +17,9 @@ import axios from 'axios';
 const App = () => {
   const [weatherData, setWeatherData] = useState(null);
   const [forecastData, setForecastData] = useState(null);
-  const [airQualityData, setAirQualityData] = useState(null); // Nuevo estado para calidad del aire
+  const [airQualityData, setAirQualityData] = useState(null);
   const [error, setError] = useState(null);
   const [countries, setCountries] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState('');
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -34,13 +33,16 @@ const App = () => {
   useEffect(() => {
     const fetchWeatherByLocation = async (lat, lon) => {
       try {
-        const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=YOUR_API_KEY&units=metric&lang=es`);
-        const data = await response.json();
-        setWeatherData(data);
+        const weatherResponse = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=ef72906a4e67f01bd6ae4ade73936409&units=metric&lang=es`);
+        const weatherData = await weatherResponse.json();
+        setWeatherData(weatherData);
 
-        // Llamada para obtener la calidad del aire por ubicación
         const airQuality = await getAirQualityByCity(lat, lon);
         setAirQualityData(airQuality);
+
+        const forecastResponse = await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=ef72906a4e67f01bd6ae4ade73936409&units=metric&lang=es`);
+        const forecastData = await forecastResponse.json();
+        setForecastData(forecastData);
       } catch (error) {
         setError('Error al obtener el clima por ubicación');
       }
@@ -54,12 +56,15 @@ const App = () => {
         },
         (error) => {
           console.error('Error al obtener la ubicación:', error);
+          setError('No se pudo obtener la ubicación. Por favor, ingresa una ciudad.');
         }
       );
+    } else {
+      setError('Geolocalización no es compatible con este navegador.');
     }
   }, []);
 
-  const handleSearch = async (city) => {
+  const handleSearch = async (city, selectedCountry) => {
     try {
       const weather = await getWeatherByCity(`${city},${selectedCountry}`);
       const forecast = await getForecastByCity(`${city},${selectedCountry}`);
@@ -67,7 +72,6 @@ const App = () => {
       setForecastData(forecast);
       setError(null);
 
-      // Llamada para obtener la calidad del aire
       const { coord } = weather;
       const airQuality = await getAirQualityByCity(coord.lat, coord.lon);
       setAirQualityData(airQuality);
@@ -79,15 +83,7 @@ const App = () => {
   return (
     <div className="app">
       <h1>Aplicación del Clima</h1>
-      <div>
-        <select onChange={(e) => setSelectedCountry(e.target.value)}>
-          <option value="">Selecciona un país</option>
-          {countries.map((country) => (
-            <option key={country.cca2} value={country.cca2}>{country.name.common}</option>
-          ))}
-        </select>
-        <SearchBar onSearch={handleSearch} />
-      </div>
+      <SearchBar onSearch={handleSearch} countries={countries} />
       {error && <p>{error}</p>}
       <WeatherCard weatherData={weatherData} />
       <ForecastCard forecastData={forecastData} />
@@ -97,4 +93,7 @@ const App = () => {
 };
 
 export default App;
+
+
+
 

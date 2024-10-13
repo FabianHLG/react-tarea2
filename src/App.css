@@ -6,8 +6,10 @@
   padding: 20px;
 }
 
-h1 {
-  font-size: 2.5rem;
+.app h1 {
+  color: #f6f6f7;
+  font-size: 2rem; 
+  text-align: center; 
   margin-bottom: 20px;
 }
 
@@ -22,4 +24,27 @@ select {
 .error {
   color: red;
   font-weight: bold;
+}
+.search-popup {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.search-popup input {
+  margin-bottom: 10px;
+  padding: 5px;
+  width: 100%;
+}
+
+.search-popup button {
+  padding: 5px 10px;
+  margin-right: 5px;
 }

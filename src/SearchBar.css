@@ -1,29 +1,65 @@
-.search-bar {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-input {
+.search-container {
+    position: relative;
+  }
+  
+  .search-button {
+    background-color: #007bff00; /* Color del fondo */
+    border: none;
+    border-radius: 50%; /* Hace que el botón sea completamente redondo */
     padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-right: 10px;
-    width: 250px;
-}
-
-button {
-    padding: 10px 15px;
-    font-size: 1rem;
-    color: white;
-    background-color: #28a745; /* Color verde */
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-button:hover {
+    background-color: #78afe967; /* Color de fondo al pasar el mouse */
+  }
+  .search-modal {
+    position: absolute;
+    top: 60px; /* Ajusta según sea necesario */
+    right: 10px; /* Ajusta según sea necesario */
+    background: rgba(255, 255, 255, 0.85); /* Fondo blanco con mayor transparencia */
+    border: 1px solid rgba(0, 0, 0, 0.1); /* Borde más sutil */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); /* Sombra más intensa */
+    padding: 15px;
+    border-radius: 10px; /* Bordes redondeados */
+    z-index: 1000; /* Asegura que esté encima de otros elementos */
+    width: 300px; /* Ancho de la ventana emergente */
+  }
+  
+  .search-bar {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .search-bar input {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 14px;
+  }
+  
+  .search-bar select {
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px; /* Bordes redondeados */
+    font-size: 14px;
+  }
+  
+  .search-submit {
+    background-color: #87CEFA; /* Color del botón de búsqueda */
+    color: #fff;
     border: none;
     border-radius: 5px;
+    padding: 10px;
     cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #218838; /* Color más oscuro al pasar el mouse */
-}
+    transition: background-color 0.3s ease;
+  }
+  
+  .search-submit:hover {
+    background-color: #218838; /* Color al pasar el mouse */
+  }
+  
+  
