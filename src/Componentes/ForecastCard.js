@@ -1,6 +1,4 @@
-import React, { useState } from 'react';
 import Slider from 'react-slick';
-
 import { getWeatherIcon } from './weatherUtils';
 
 const ForecastCard = ({ forecastData }) => {
@@ -9,88 +7,52 @@ const ForecastCard = ({ forecastData }) => {
   }
 
   const settings = {
-    dots: true,
-    infinite: true,
+    dots: false,
+    infinite: false, // Desactivar el deslizamiento infinito
     speed: 500,
-    slidesToShow: 1,
+    slidesToShow: 4, // Muestra 4 horas a la vez
     slidesToScroll: 1,
-    adaptiveHeight: false, // Desactivamos adaptiveHeight para que el carrusel tenga una altura fija
+    adaptiveHeight: true,
   };
 
-  const groupedForecasts = {};
-  forecastData.list.forEach((item) => {
-    const date = item.dt_txt.split(' ')[0];
-    if (!groupedForecasts[date]) {
-      groupedForecasts[date] = [];
-    }
-    groupedForecasts[date].push(item);
+  const currentTime = new Date();
+  const currentHour = currentTime.getHours();
+
+  // Obtener el índice de la primera hora más cercana a la hora actual
+  const firstRelevantIndex = forecastData.list.findIndex(item => {
+    const forecastHour = new Date(item.dt_txt).getHours();
+    return forecastHour === currentHour || forecastHour === currentHour + 1; // También considera la próxima hora
   });
 
-  const forecastDays = Object.keys(groupedForecasts);
+  // Si no hay horas futuras, comenzamos desde la primera hora del día siguiente
+  const startingIndex = firstRelevantIndex !== -1 ? firstRelevantIndex : 0;
 
   return (
     <div className="forecast-card">
-      <h2>Pronóstico de 5 días</h2>
-      <Slider {...settings}>
-        {forecastDays.slice(0, 5).map((date, index) => {
-          const dailyForecast = groupedForecasts[date];
-          const tempMax = Math.max(...dailyForecast.map(item => item.main.temp_max));
-          const tempMin = Math.min(...dailyForecast.map(item => item.main.temp_min));
-          const description = dailyForecast[0].weather[0].description;
-          const windSpeed = dailyForecast[0].wind.speed;
-          const icon = getWeatherIcon(dailyForecast[0].weather[0].icon);
-          
+      <Slider {...settings} initialSlide={startingIndex}>
+        {forecastData.list.map((item, index) => {
+          const icon = getWeatherIcon(item.weather[0].icon);
+          const description = item.weather[0].description;
+          const maxTemp = item.main.temp_max.toFixed(1);
+          const minTemp = item.main.temp_min.toFixed(1);
+          const forecastDate = new Date(item.dt_txt).toLocaleDateString('es-LA', { weekday: 'long', day: 'numeric' });
+
           return (
-            <div key={index} className="forecast-item">
-              <h3>{new Date(date).toLocaleDateString('es-LA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</h3>
-              <img src={icon} alt={description} className="weather-icon" />
-              <ForecastDetails tempMax={tempMax} tempMin={tempMin} description={description} windSpeed={windSpeed} />
-              <HourlyForecast hourlyData={dailyForecast} />
+            <div key={index} className="hourly-item">
+              <h3 className="forecast-date">{forecastDate}</h3> {/* Día */}
+              <h4 className="hourly-time">
+                {new Date(item.dt_txt).toLocaleTimeString('es-LA', { hour: '2-digit', minute: '2-digit', hour12: true })} {/* Formato 12 horas */}
+              </h4>
+              <div className="hourly-icon-container">
+                <img src={icon} alt={description} className="weather-icon" />
+              </div>
+              <p className="weather-description">{description.charAt(0).toUpperCase() + description.slice(1)}</p> {/* Descripción del clima */}
+              <p className="hourly-detail" style={{ marginBottom: '10px' }}>Máx: {maxTemp}°C</p> {/* Temperatura máxima con separación */}
+              <p className="hourly-detail" style={{ marginTop: '10px' }}>Mín: {minTemp}°C</p> {/* Temperatura mínima con separación */}
             </div>
           );
         })}
       </Slider>
-    </div>
-  );
-};
-
-const ForecastDetails = ({ tempMax, tempMin, description, windSpeed }) => {
-  return (
-    <div className="forecast-info">
-      <p>Máxima: {tempMax.toFixed(1)}°C</p>
-      <p>Mínima: {tempMin.toFixed(1)}°C</p>
-      <p>Clima: {description}</p>
-      <p>Viento: {windSpeed} m/s</p>
-    </div>
-  );
-};
-
-// Componente para mostrar detalles por hora
-const HourlyForecast = ({ hourlyData }) => {
-  const [openIndex, setOpenIndex] = useState(null);
-
-  const toggleHourDetails = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
-  return (
-    <div className="hourly-forecast">
-      <h4>Detalles por hora</h4>
-      {hourlyData.map((item, index) => (
-        <div key={index}>
-          <button className="hourly-button" onClick={() => toggleHourDetails(index)}>
-            {new Date(item.dt_txt).toLocaleTimeString('es-LA', { hour: '2-digit', minute: '2-digit' })} 
-            {openIndex === index ? ' - Menos' : ' - Más'}
-          </button>
-          {openIndex === index && (
-            <div className="hourly-details">
-              <p>Temperatura: {item.main.temp.toFixed(1)}°C</p>
-              <p>Clima: {item.weather[0].description}</p>
-              <p>Viento: {item.wind.speed} m/s</p>
-            </div>
-          )}
-        </div>
-      ))}
     </div>
   );
 };
